@@ -16,7 +16,8 @@ public interface ContactManager
 	* @return the ID for the meeting
 	* @throws IllegalArgumentException if the meeting is set for a time in the past,
 	* of if any contact is unknown / non-existent
-	* /
+	*/
+
 	int addFutureMeeting(Set<Contact> contacts, Calendar date);
 
 	/**
