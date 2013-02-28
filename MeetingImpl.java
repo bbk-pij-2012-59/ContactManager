@@ -9,6 +9,8 @@ import java.util.Set;
 * 6th February 2013 - Created from the Meeting interface
 * Three (plus one static) fields, constructor and interior of methods added
 * Compiles OK
+* 28th February 2013 - further constructor added
+* Compiles OK
 */
 
 public class MeetingImpl implements Meeting
@@ -32,6 +34,21 @@ public class MeetingImpl implements Meeting
 		this.MeetingParticipants = contacts;
 		MeetingCount++;
 		this.MeetingID = MeetingCount;
+	}
+
+	/**
+	*constructor - used when converting between a FutureMeetingImpl and a PastMeetingImpl
+	* @param id the id of the original meeting
+	* @param date the date (and time?) of the new meeting
+	* @param contacts the list of participating contacts
+	* For better security, could follow KLM's instructions,
+	* define setContacts and setDate methods for use in this constructor
+	*/
+	public MeetingImpl(int oldId, Set<Contact> contacts, Calendar date)
+	{
+		this.MeetingID = oldId;
+		this.MeetingDate = date;
+		this.MeetingParticipants = contacts;
 	}
 
 	/**
@@ -70,3 +87,5 @@ public class MeetingImpl implements Meeting
 	}
 
 }
+
+
