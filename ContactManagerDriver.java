@@ -21,8 +21,8 @@ class ContactManagerDriver
 
 	public void launch()
 	{
-		//ContactManager cmd1 = new ContactManagerImpl();
-		//System.out.println(cmd1);
+		ContactManager cmd1 = new ContactManagerImpl();
+		System.out.println(cmd1);
 		//System.out.println(cmd1.AllMeetings);
 		//System.out.println(cmd1.AllContacts);
 
