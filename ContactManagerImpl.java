@@ -6,8 +6,8 @@ import java.util.Set;
 * A class to manage your contacts and meetings.
 * 6th February 2013 - Created from the ContactManager interface
 * Empty constructor and methods
-*
 * 7th February 2013 - English language (not even pseudocode) descriptions of methods!
+* 5th March 2013 - added dummy return statements, so that the compiler isn't screaming!
 */
 public class ContactManagerImpl implements ContactManager
 {
@@ -37,6 +37,7 @@ public class ContactManagerImpl implements ContactManager
 // If the date provided is in the future and all the contacts exist
 // 		create a new instance of FutureMeetingImpl, passing its constructor the parameters provided
 // otherwise throw the required exception (IllegalArgumentException)
+return 10;//dummy value
 	}
 
 
@@ -54,6 +55,7 @@ public class ContactManagerImpl implements ContactManager
 // 			return the corresponding meeting
 //		otherwise throw the required exception (IllegalArgumentException)
 // otherwise return null
+return null;//dummy value
 	}
 
 
@@ -71,6 +73,7 @@ public class ContactManagerImpl implements ContactManager
 // 			return the corresponding meeting
 //		otherwise throw the required exception (IllegalArgumentException)
 // otherwise return null
+return null;//dummy value
 	}
 
 
@@ -85,6 +88,7 @@ public class ContactManagerImpl implements ContactManager
 // 	If the meeting ID exists
 //		return the corresponding meeting
 // otherwise return null
+return null;//dummy value
 	}
 
 
@@ -106,6 +110,7 @@ public class ContactManagerImpl implements ContactManager
 //			return a sorted (by date and time) list of those meetings
 //		otherwise return an empty list
 // otherwise throw the required exception (IllegalArgumentException)
+return null;//dummy value
 	}
 
 
@@ -125,6 +130,7 @@ public class ContactManagerImpl implements ContactManager
 // If there were or are to be any meetings scheduled on the date provided
 //		return a sorted (by time) list of those meetings
 // otherwise return an empty list
+return null;//dummy value
 	}
 
 
@@ -146,6 +152,7 @@ public class ContactManagerImpl implements ContactManager
 //			return a sorted (by date and time) list of those meetings
 //		otherwise return an empty list
 // otherwise throw the required exception (IllegalArgumentException)
+return null;//dummy value
 	}
 
 
@@ -223,6 +230,7 @@ public class ContactManagerImpl implements ContactManager
 // If all the contact IDs exist
 //		return a list of the corresponding contacts
 // otherwise throw the required exception (IllegalArgumentException)
+return null;//dummy value
 	}
 
 
@@ -238,6 +246,7 @@ public class ContactManagerImpl implements ContactManager
 // If string parameter provided is not null (what about if it's an empty string?)
 //		return a list of contacts that contain that string within their name field
 // otherwise throw the required exception (NullPointerException)
+return null;//dummy value
 	}
 
 	/**
