@@ -7,6 +7,7 @@ import java.util.HashSet;
 * 5th March 2013 - ContactImpl instances created
 * 5th March 2013 - Calendar instance created
 * 5th March 2013 - HashSet of Contacts created
+* 5th March 2013 - Meeting instances created
 */
 
 class ContactManagerDriver
@@ -53,6 +54,29 @@ class ContactManagerDriver
 		
 			System.out.println(next.getId() + " " + next.getName() + " " + next.getNotes() + " ");
 		}
+
+		Meeting m1 = new MeetingImpl(setc1, cal1);
+		System.out.println("Meeting number: " + m1.getId());
+		System.out.println("Meeting date: " + m1.getDate());
+		System.out.println("Meeting participants: " + m1.getContacts());
+
+		FutureMeeting m2 = new FutureMeetingImpl(setc1, cal1);
+		System.out.println("Meeting number: " + m2.getId());
+		System.out.println("Meeting date: " + m2.getDate());
+		System.out.println("Meeting participants: " + m2.getContacts());
+
+		PastMeeting m3 = new PastMeetingImpl(setc1, cal1, "Notes about third meeting");
+		System.out.println("Meeting number: " + m3.getId());
+		System.out.println("Meeting date: " + m3.getDate());
+		System.out.println("Meeting participants: " + m3.getContacts());
+		System.out.println("Meeting notes: " + m3.getNotes());
+
+		PastMeeting m4 = new PastMeetingImpl((FutureMeetingImpl) m2, "Notes about fourth meeting");
+		System.out.println("Meeting number: " + m4.getId());
+		System.out.println("Meeting date: " + m4.getDate());
+		System.out.println("Meeting participants: " + m4.getContacts());
+		System.out.println("Meeting notes: " + m4.getNotes());
+
 	}
 
 }
