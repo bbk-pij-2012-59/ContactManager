@@ -1,6 +1,12 @@
+import java.util.Calendar;
+import java.util.Set;
+import java.util.HashSet;
+
 /**
 * 5th March 2013 - Created so that I can get a feel for the system
-* 5th March 2013 - ContactImpls created and printed
+* 5th March 2013 - ContactImpl instances created
+* 5th March 2013 - Calendar instance created
+* 5th March 2013 - HashSet of Contacts created
 */
 
 class ContactManagerDriver
@@ -34,6 +40,19 @@ class ContactManagerDriver
 		c2.addNotes("Notes about second contact");
 		System.out.println(c1.getNotes());
 		System.out.println(c2.getNotes());
+
+		Calendar cal1 = Calendar.getInstance();
+		System.out.println(cal1);
+
+		Set<Contact> setc1 = new HashSet<Contact>();
+		System.out.println(setc1);
+		setc1.add(c1);
+		setc1.add(c2);
+		for (Contact next : setc1)
+		{
+		
+			System.out.println(next.getId() + " " + next.getName() + " " + next.getNotes() + " ");
+		}
 	}
 
 }
