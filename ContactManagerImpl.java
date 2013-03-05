@@ -8,6 +8,9 @@ import java.util.Set;
 * Empty constructor and methods
 * 7th February 2013 - English language (not even pseudocode) descriptions of methods!
 * 5th March 2013 - added dummy return statements, so that the compiler isn't screaming!
+* 5th March 2013 - created some private methods to do some of the checking for condtions that cause exceptions to be thrown
+*                  (won't need to write these methods until later!)
+
 */
 public class ContactManagerImpl implements ContactManager
 {
@@ -258,6 +261,49 @@ return null;//dummy value
 	public void flush()
 	{
 // Need to look up XMLWriter
+	}
+
+	
+	/**
+	* Checks whether a date is after or before (true) the current date
+	*
+	* @param date the date to be checked	*
+	* @return false if the date is after, or true if the date is before, now
+	*/
+	private boolean dateIsBeforeNow(Calendar date)
+	{
+		boolean result = true;
+		//check whether date is actually after now
+		//if so, change result to false
+		return result;
+	}
+
+	/**
+	* Checks whether a contact exists
+	*
+	* @param contact the contact to be checked	*
+	* @return true if the contact exists, false otherwise
+	*/
+	private boolean contactExists(Contact contact)
+	{
+		boolean result = true;
+		//check whether contact actually exists
+		//if not, change result to false
+		return result;
+	}
+
+	/**
+	* Checks whether a meeting exists
+	*
+	* @param meeting the meeting to be checked	*
+	* @return true if the meeting exists, false otherwise
+	*/
+	private boolean MeetingExists(Meeting meeting)
+	{
+		boolean result = true;
+		//check whether meeting actually exists
+		//if not, change result to false
+		return result;
 	}
 
 
