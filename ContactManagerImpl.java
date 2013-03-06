@@ -8,8 +8,9 @@ import java.util.Set;
 * Empty constructor and methods
 * 7th February 2013 - English language (not even pseudocode) descriptions of methods!
 * 5th March 2013 - added dummy return statements, so that the compiler isn't screaming!
-* 5th March 2013 - created some private methods to do some of the checking for condtions that cause exceptions to be thrown
+* 5th March 2013 - created some private methods to do some of the checking for conditions that cause exceptions to be thrown
 *                  (won't need to write these methods until later!)
+* 6th March 2013 - continuing with methods, both public and private
 
 */
 public class ContactManagerImpl implements ContactManager
@@ -37,10 +38,16 @@ public class ContactManagerImpl implements ContactManager
 	*/
 	public int addFutureMeeting(Set<Contact> contacts, Calendar date) throws IllegalArgumentException
 	{
-// If the date provided is in the future and all the contacts exist
-// 		create a new instance of FutureMeetingImpl, passing its constructor the parameters provided
-// otherwise throw the required exception (IllegalArgumentException)
-return 10;//dummy value
+		if(!dateIsBeforeNow(date) && contactExists(contacts))
+		{
+			FutureMeeting fm = new FutureMeetingImpl(contacts, date);
+			return fm.getId();
+		}
+		else
+		{
+			throw new IllegalArgumentException("Contact doesn't exist or date is in past when trying to add future meeting");
+			return -1; //dummy value
+		}
 	}
 
 
@@ -53,12 +60,23 @@ return 10;//dummy value
 	*/
 	public PastMeeting getPastMeeting(int id) throws IllegalArgumentException
 	{
-// If the meeting ID exists
-// 		If the date for the corresponding meeting is not in the future
-// 			return the corresponding meeting
-//		otherwise throw the required exception (IllegalArgumentException)
-// otherwise return null
-return null;//dummy value
+		if(meetingExists(id))
+			{
+				if(dateIsBeforeNow(findDateFromMeetingID(id)))
+					{
+						return null; //dummy value - need to find meeting from ID
+					}
+				else
+					{
+			throw new IllegalArgumentException("Meeting found is in the future when trying to find past meeting");
+						return null; //dummy value
+					}
+			}
+			else
+			{
+				return null;
+			}
+
 	}
 
 
@@ -215,9 +233,14 @@ return null;//dummy value
 	*/
 	public void addNewContact(String name, String notes) throws NullPointerException
 	{
-// If both the name and the notes are not null (but notes can be an empty string)
-//		create a new instance of ContactImpl, passing its constructor the parameters provided
-// otherwise throw the required exception (NullPointerException)
+		if(name != null && notes !=null)
+		{
+			Contact cx = new ContactImpl(name, notes);
+		}
+		else
+		{
+			throw new NullPointerException("Name or notes null when trying to add contact");
+		}
 	}
 
 
@@ -293,12 +316,26 @@ return null;//dummy value
 	}
 
 	/**
+	* Checks whether a set of contacts exists
+	*
+	* @param contact the set of contacts to be checked	*
+	* @return true if all the contact exist, false otherwise
+	*/
+	private boolean contactExists(Set<Contact> contact)
+	{
+		boolean result = true;
+		//check whether all contacts actually exist, by calling contactExists for each contact
+		//if not, change result to false
+		return result;
+	}
+
+	/**
 	* Checks whether a meeting exists
 	*
-	* @param meeting the meeting to be checked	*
+	* @param meetingID the ID of the meeting to be checked
 	* @return true if the meeting exists, false otherwise
 	*/
-	private boolean MeetingExists(Meeting meeting)
+	private boolean meetingExists(int meetingID)
 	{
 		boolean result = true;
 		//check whether meeting actually exists
@@ -306,5 +343,17 @@ return null;//dummy value
 		return result;
 	}
 
+
+	/**
+	* Finds the date of a meeting from its ID
+	*
+	* @param meetingID the ID of the meeting
+	* @return the date of the meeting
+	*/
+	private Calendar findDateFromMeetingID(int meetingID)
+	{
+		Calendar dateOfMeeting = ; //need to find this
+		return dateOfMeeting;
+	}
 
 }
