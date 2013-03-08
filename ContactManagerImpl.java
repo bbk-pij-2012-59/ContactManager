@@ -11,6 +11,8 @@ import java.util.Set;
 * 5th March 2013 - created some private methods to do some of the checking for conditions that cause exceptions to be thrown
 *                  (won't need to write these methods until later!)
 * 6th March 2013 - continuing with methods, both public and private
+* 7th March 2013 - throwing exceptions
+* 8th March 2013 - every exception is to be thrown within an if statement
 
 */
 public class ContactManagerImpl implements ContactManager
@@ -24,7 +26,8 @@ public class ContactManagerImpl implements ContactManager
 	*/
 	public ContactManagerImpl()
 	{
-
+		AllContacts = new HashSet<Contact>();
+		AllMeetings = new ArrayList<Meeting>();
 	}
 
 	/**
@@ -38,16 +41,15 @@ public class ContactManagerImpl implements ContactManager
 	*/
 	public int addFutureMeeting(Set<Contact> contacts, Calendar date) throws IllegalArgumentException
 	{
-		if(!dateIsBeforeNow(date) && contactExists(contacts))
+		if(dateIsBeforeNow(date) || !contactExists(contacts))
 		{
-			FutureMeeting fm = new FutureMeetingImpl(contacts, date);
-			return fm.getId();
+			throw new IllegalArgumentException("Trying to add future meeting: contact doesn't exist or date is in past");
 		}
 		else
 		{
-			throw new IllegalArgumentException("Contact doesn't exist or date is in past when trying to add future meeting");
-			return -1; //dummy value
+			FutureMeeting fmx = new FutureMeetingImpl(contacts, date);
 		}
+		return fmx.getId();
 	}
 
 
@@ -60,23 +62,12 @@ public class ContactManagerImpl implements ContactManager
 	*/
 	public PastMeeting getPastMeeting(int id) throws IllegalArgumentException
 	{
-		if(meetingExists(id))
-			{
-				if(dateIsBeforeNow(findDateFromMeetingID(id)))
-					{
-						return null; //dummy value - need to find meeting from ID
-					}
-				else
-					{
-			throw new IllegalArgumentException("Meeting found is in the future when trying to find past meeting");
-						return null; //dummy value
-					}
-			}
-			else
-			{
-				return null;
-			}
-
+		PastMeeting pmx = getMeeting(id);
+		if(!dateIsBeforeNow(pmx.getDate()))
+		{
+			throw new IllegalArgumentException("Trying to find past meeting: meeting with that ID is in the future");
+		}
+			return pmx;
 	}
 
 
@@ -89,12 +80,12 @@ public class ContactManagerImpl implements ContactManager
 	*/
 	public FutureMeeting getFutureMeeting(int id) throws IllegalArgumentException
 	{
-// If the meeting ID exists
-// 		If the date for the corresponding meeting is not in the past
-// 			return the corresponding meeting
-//		otherwise throw the required exception (IllegalArgumentException)
-// otherwise return null
-return null;//dummy value
+		FutureMeeting fmx = getMeeting(id);
+		if(dateIsBeforeNow(fmx.getDate()))
+		{
+			throw new IllegalArgumentException("Trying to find future meeting: meeting with that ID is in the past");
+		}
+		return fmx;
 	}
 
 
@@ -106,10 +97,15 @@ return null;//dummy value
 	*/
 	public Meeting getMeeting(int id)
 	{
-// 	If the meeting ID exists
-//		return the corresponding meeting
-// otherwise return null
-return null;//dummy value
+		for (Meeting next : AllMeetings)
+		{
+		
+			if (id = next.id())
+			{
+				return next;
+			}
+		}
+		return null;
 	}
 
 
@@ -126,12 +122,18 @@ return null;//dummy value
 	*/
 	public List<Meeting> getFutureMeetingList(Contact contact) throws IllegalArgumentException
 	{
-// If the contact exists
+		if(!contactExists(contact))
+		{
+			throw new IllegalArgumentException("Trying to find future meetings with contact: contact does not exist");
+		}
+		else
+		{	
+		List<Meeting> listfmx = new ArrayList<Meeting>();
 //		If meetings are scheduled with the contact
-//			return a sorted (by date and time) list of those meetings
-//		otherwise return an empty list
-// otherwise throw the required exception (IllegalArgumentException)
-return null;//dummy value
+//			add meetings into list
+		}
+//		sort list by date and time
+		return listfmx;
 	}
 
 
@@ -148,10 +150,13 @@ return null;//dummy value
 	*/
 	public List<Meeting> getFutureMeetingList(Calendar date)
 	{
-// If there were or are to be any meetings scheduled on the date provided
-//		return a sorted (by time) list of those meetings
-// otherwise return an empty list
-return null;//dummy value
+		List<Meeting> listmx = new ArrayList<Meeting>();
+//		If meetings happened on or are scheduled for that date
+//		{
+//			add meetings into list
+//		}
+//		sort list by date and time
+		return listmx;
 	}
 
 
@@ -168,12 +173,18 @@ return null;//dummy value
 	*/
 	public List<PastMeeting> getPastMeetingList(Contact contact) throws IllegalArgumentException
 	{
-// If the contact exists
-//		If the contact has participated in meetings
-//			return a sorted (by date and time) list of those meetings
-//		otherwise return an empty list
-// otherwise throw the required exception (IllegalArgumentException)
-return null;//dummy value
+		if(!contactExists(contact))
+		{
+			throw new IllegalArgumentException("Trying to find past meetings with contact: contact does not exist");
+		}
+		else
+		{	
+		List<Meeting> listpmx = new ArrayList<Meeting>();
+//		If meetings happened with the contact
+//			add meetings into list
+		}
+//		sort list by date and time
+		return listpmx;
 	}
 
 
@@ -189,12 +200,18 @@ return null;//dummy value
 	*/
 	public void addNewPastMeeting(Set<Contact> contacts, Calendar date, String text) throws NullPointerException
 	{
-// If all the parameters are not null
-// 		If all the contacts exist
-//			(doesn't care if date is in past or not?)
-// 			create a new instance of PastMeetingImpl
-// 		otherwise throw the required exception (IllegalArgumentException)
-// otherwise throw the required exception (NullPointerException)
+		if(contacts == null || date == null || text == null)
+		{
+			throw new NullPointerException("Trying to create new past meeting: one of arguments is null");
+		}
+		else if(!contactExists(contacts))
+		{
+			throw new IllegalArgumentException("Trying to create new past meeting: at least one of contacts doesn't exist");
+		}
+		else
+		{
+			PastMeeting pmx = new PastMeetingImpl(contacts, date, text);
+		}
 	}
 
 
@@ -214,13 +231,23 @@ return null;//dummy value
 	*/
 	public void addMeetingNotes(int id, String text) throws NullPointerException, IllegalStateException, IllegalArgumentException
 	{
-// If the text parameter is not null (could be an empty string, but rather pointless)
-// 		If the meeting id exists
-//			If the corresponding meeting is not scheduled for the future
-//				add the text provided to the end of the notes field for the corresponding meeting
-// 			otherwise throw the required exception (IllegalStateException)
-// 		otherwise throw the required exception (IllegalArgumentException)
-// otherwise throw the required exception (NullPointerException)
+		if (notes = null)
+		{
+			throw new NullPointerException("Trying to add notes to meeting: notes are null");
+		}
+		else
+		{
+			Meeting fmx = getMeeting(id);
+			if (fmx == null)
+			{
+				throw new IllegalArgumentException("Trying to add notes to meeting: meeting does not exist");
+			}
+			if(!dateIsBeforeNow(fmx.getDate()))
+			{
+				throw new IllegalStateException("Trying to add notes to meeting: meeting with that ID is in the future");
+			}
+			PastMeeting pmx = new PastMeetingImpl(fmx, txt);
+		}
 	}
 
 
@@ -233,13 +260,14 @@ return null;//dummy value
 	*/
 	public void addNewContact(String name, String notes) throws NullPointerException
 	{
-		if(name != null && notes !=null)
+		if(name == null || notes ==null)
 		{
-			Contact cx = new ContactImpl(name, notes);
+			throw new NullPointerException("Trying to create new contact: name or notes null");
 		}
 		else
 		{
-			throw new NullPointerException("Name or notes null when trying to add contact");
+			Contact cx = new ContactImpl(name, notes);
+			AllContacts.add(cx);
 		}
 	}
 
@@ -253,6 +281,7 @@ return null;//dummy value
 	*/
 	public Set<Contact> getContacts(int... ids) throws IllegalArgumentException
 	{
+
 // If all the contact IDs exist
 //		return a list of the corresponding contacts
 // otherwise throw the required exception (IllegalArgumentException)
@@ -269,10 +298,30 @@ return null;//dummy value
 	*/
 	public Set<Contact> getContacts(String name) throws NullPointerException
 	{
-// If string parameter provided is not null (what about if it's an empty string?)
-//		return a list of contacts that contain that string within their name field
-// otherwise throw the required exception (NullPointerException)
-return null;//dummy value
+		if(name == null)
+		{
+			throw new NullPointerException("Searching for contacts: search string is null");
+		}
+		else
+		{
+			Set<Contact> setcx = new HashSet<Contact>();
+			for (Contact next : AllContacts)
+			{
+				nextName = next.getName();
+				nameLength = nextName.length();
+				boolean includesString = true;
+				for(int i = 0; i < nameLength; i++)
+				{
+					//check to see if string is in name
+					//if not, change includesString to false;
+				}
+				if(includesString)
+				{
+					setcx.add(next);
+				}
+			}
+		return setcx;
+		}
 	}
 
 	/**
