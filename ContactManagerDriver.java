@@ -85,7 +85,7 @@ class ContactManagerDriver
 		//System.out.println(cm1.AllContacts);
 
 
-		//TESTING addFutureMeeting(Set<Contact> contacts, Calendar date)
+		System.out.println("TESTING addFutureMeeting(Set<Contact> contacts, Calendar date)");
 		Calendar cal2 = Calendar.getInstance();
 		Contact c3 = new ContactImpl ("Third Contact", "Notes on third contact");
 		Contact c4 = new ContactImpl ("Fourth Contact", "Notes on fourth contact");
@@ -97,24 +97,39 @@ class ContactManagerDriver
 		int fmn2 = cm1.addFutureMeeting(setc2, cal2);
 		System.out.println(fmn2);
 
-		//TESTING getMeeting(int id)
-		Meeting mx1 = cm1.getMeeting(1001);
-		Meeting mx2 = cm1.getMeeting(1002);
-		System.out.println("Meeting number: " + mx1.getId());
-		System.out.println("Meeting date: " + mx1.getDate());
-		System.out.println("Meeting participants: " + mx1.getContacts());
-		System.out.println("Meeting number: " + mx2.getId());
-		System.out.println("Meeting date: " + mx2.getDate());
-		System.out.println("Meeting participants: " + mx2.getContacts());
-
-		//TESTING addNewPastMeeting(Set<Contact> contacts, Calendar date, String text)
+		System.out.println("");
+		System.out.println("TESTING addNewPastMeeting(Set<Contact> contacts, Calendar date, String text)");
 		cm1.addNewPastMeeting(setc2, cal2, "Notes for new past meeting");
 		Meeting mx3 = cm1.getMeeting(1003);
 		System.out.println("Meeting number: " + mx3.getId());
-		System.out.println("Meeting date: " + mx3.getDate());
+		System.out.println("Meeting date: " + mx3.getDate().getTime());
 		System.out.println("Meeting participants: " + mx3.getContacts());
 
+		System.out.println("");
+		System.out.println("TESTING getMeeting(int id)");
+		Meeting mx1 = cm1.getMeeting(1001);
+		Meeting mx2 = cm1.getMeeting(1002);
+		System.out.println("Meeting number: " + mx1.getId());
+		System.out.println("Meeting date: " + mx1.getDate().getTime());
+		System.out.println("Meeting participants: " + mx1.getContacts());
+		System.out.println("Meeting number: " + mx2.getId());
+		System.out.println("Meeting date: " + mx2.getDate().getTime());
+		System.out.println("Meeting participants: " + mx2.getContacts());
 
+		System.out.println("");
+		System.out.println("TESTING getFutureMeeting(int id)");
+		FutureMeeting fmx1 = cm1.getFutureMeeting(1002);
+		System.out.println("Meeting number: " + fmx1.getId());
+		System.out.println("Meeting date: " + fmx1.getDate().getTime());
+		System.out.println("Meeting participants: " + fmx1.getContacts());
+
+
+		System.out.println("");
+		System.out.println("TESTING getPastMeeting(int id)");
+		PastMeeting pmx1 = cm1.getPastMeeting(1003);
+		System.out.println("Meeting number: " + pmx1.getId());
+		System.out.println("Meeting date: " + pmx1.getDate().getTime());
+		System.out.println("Meeting participants: " + pmx1.getContacts());
 
 		//List<Meeting> lm1 = new ArrayList<Meeting>();
 

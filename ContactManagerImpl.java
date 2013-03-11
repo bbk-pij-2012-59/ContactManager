@@ -20,6 +20,8 @@ import java.util.HashSet;
 *                   addFutureMeeting(Set<Contact> contacts, Calendar date) generates an ID
 		    getMeeting(int id) appears to work
 		    addNewPastMeeting(Set<Contact> contacts, Calendar date, String text) appears to work
+		    getFutureMeeting(int id) appears to work
+		    getPastMeeting(int id) appears to work
 */
 public class ContactManagerImpl implements ContactManager
 {
@@ -50,7 +52,7 @@ public class ContactManagerImpl implements ContactManager
 //APPEARS TO WORK 11/03/2013
 	public int addFutureMeeting(Set<Contact> contacts, Calendar date) throws IllegalArgumentException
 	{
-		if(dateIsBeforeNow(date) || !contactExists(contacts))
+		if(!dateIsAfterNow(date) || !contactExists(contacts))
 		{
 			throw new IllegalArgumentException("Trying to add future meeting: contact doesn't exist or date is in past");
 		}
@@ -91,7 +93,7 @@ public class ContactManagerImpl implements ContactManager
 	public FutureMeeting getFutureMeeting(int id) throws IllegalArgumentException
 	{
 		FutureMeeting fmx = (FutureMeeting)getMeeting(id);
-		if(dateIsBeforeNow(fmx.getDate()))
+		if(!dateIsAfterNow(fmx.getDate()))
 		{
 			throw new IllegalArgumentException("Trying to find future meeting: meeting with that ID is in the past");
 		}
@@ -359,13 +361,23 @@ return null;//dummy value
 	*/
 	private boolean dateIsBeforeNow(Calendar date)
 	{
-		boolean result = false;
-		//check whether date is actually before now
-		//if so, change result to true
-		//boolean result = true;
+		boolean result = true;
 		//check whether date is actually after now
 		//if so, change result to false
+		return result;
+	}
 
+	/**
+	* Checks whether a date is after (true) or before the current date
+	*
+	* @param date the date to be checked	*
+	* @return true if the date is after, or false if the date is before, now
+	*/
+	private boolean dateIsAfterNow(Calendar date)
+	{
+		boolean result = true;
+		//check whether date is actually after now
+		//if so, change result to false
 		return result;
 	}
 
