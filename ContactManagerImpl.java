@@ -1,6 +1,9 @@
 import java.util.Calendar;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Set;
+import java.util.HashSet;
+
 
 /**
 * A class to manage your contacts and meetings.
@@ -13,13 +16,18 @@ import java.util.Set;
 * 6th March 2013 - continuing with methods, both public and private
 * 7th March 2013 - throwing exceptions
 * 8th March 2013 - every exception is to be thrown within an if statement
-
+* 11th March 2013 - testing individual methods using launch2 method of ContactManagerDriver
+*                   addFutureMeeting(Set<Contact> contacts, Calendar date) generates an ID
+		    getMeeting(int id) appears to work
+		    addNewPastMeeting(Set<Contact> contacts, Calendar date, String text) appears to work
 */
 public class ContactManagerImpl implements ContactManager
 {
 
-	private List<Meeting> AllMeetings;
-	private Set<Contact> AllContacts;
+	//private List<Meeting> AllMeetings;
+	//private Set<Contact> AllContacts;
+	public List<Meeting> AllMeetings; //should make it easier to test what's going on
+	public Set<Contact> AllContacts; //should it easier to test what's going on
 
 	/**
 	*constructor - creates a new ContactManager
@@ -39,6 +47,7 @@ public class ContactManagerImpl implements ContactManager
 	* @throws IllegalArgumentException if the meeting is set for a time in the past,
 	* of if any contact is unknown / non-existent
 	*/
+//APPEARS TO WORK 11/03/2013
 	public int addFutureMeeting(Set<Contact> contacts, Calendar date) throws IllegalArgumentException
 	{
 		if(dateIsBeforeNow(date) || !contactExists(contacts))
@@ -48,8 +57,9 @@ public class ContactManagerImpl implements ContactManager
 		else
 		{
 			FutureMeeting fmx = new FutureMeetingImpl(contacts, date);
+			AllMeetings.add(fmx);
+			return fmx.getId();
 		}
-		return fmx.getId();
 	}
 
 
@@ -62,7 +72,7 @@ public class ContactManagerImpl implements ContactManager
 	*/
 	public PastMeeting getPastMeeting(int id) throws IllegalArgumentException
 	{
-		PastMeeting pmx = getMeeting(id);
+		PastMeeting pmx = (PastMeeting)getMeeting(id);
 		if(!dateIsBeforeNow(pmx.getDate()))
 		{
 			throw new IllegalArgumentException("Trying to find past meeting: meeting with that ID is in the future");
@@ -80,7 +90,7 @@ public class ContactManagerImpl implements ContactManager
 	*/
 	public FutureMeeting getFutureMeeting(int id) throws IllegalArgumentException
 	{
-		FutureMeeting fmx = getMeeting(id);
+		FutureMeeting fmx = (FutureMeeting)getMeeting(id);
 		if(dateIsBeforeNow(fmx.getDate()))
 		{
 			throw new IllegalArgumentException("Trying to find future meeting: meeting with that ID is in the past");
@@ -95,12 +105,13 @@ public class ContactManagerImpl implements ContactManager
 	* @param id the ID for the meeting
 	* @return the meeting with the requested ID, or null if it there is none.
 	*/
+//APPEARS TO WORK 11/03/2013
 	public Meeting getMeeting(int id)
 	{
 		for (Meeting next : AllMeetings)
 		{
 		
-			if (id = next.id())
+			if (id == next.getId())
 			{
 				return next;
 			}
@@ -131,9 +142,10 @@ public class ContactManagerImpl implements ContactManager
 		List<Meeting> listfmx = new ArrayList<Meeting>();
 //		If meetings are scheduled with the contact
 //			add meetings into list
+//			sort list by date and time
+			return listfmx;
 		}
-//		sort list by date and time
-		return listfmx;
+
 	}
 
 
@@ -154,9 +166,9 @@ public class ContactManagerImpl implements ContactManager
 //		If meetings happened on or are scheduled for that date
 //		{
 //			add meetings into list
+//			sort list by date and time
+			return listmx;
 //		}
-//		sort list by date and time
-		return listmx;
 	}
 
 
@@ -179,12 +191,12 @@ public class ContactManagerImpl implements ContactManager
 		}
 		else
 		{	
-		List<Meeting> listpmx = new ArrayList<Meeting>();
-//		If meetings happened with the contact
+			List<PastMeeting> listpmx = new ArrayList<PastMeeting>();
+//			If meetings happened with the contact
 //			add meetings into list
+//			sort list by date and time
+			return listpmx;
 		}
-//		sort list by date and time
-		return listpmx;
 	}
 
 
@@ -198,6 +210,8 @@ public class ContactManagerImpl implements ContactManager
 	* empty, or any of the contacts does not exist
 	* @throws NullPointerException if any of the arguments is null
 	*/
+//APPEARS TO WORK 11/03/2013
+//NB Doesn't check whether date is in the past
 	public void addNewPastMeeting(Set<Contact> contacts, Calendar date, String text) throws NullPointerException
 	{
 		if(contacts == null || date == null || text == null)
@@ -211,6 +225,7 @@ public class ContactManagerImpl implements ContactManager
 		else
 		{
 			PastMeeting pmx = new PastMeetingImpl(contacts, date, text);
+			AllMeetings.add(pmx);
 		}
 	}
 
@@ -231,7 +246,7 @@ public class ContactManagerImpl implements ContactManager
 	*/
 	public void addMeetingNotes(int id, String text) throws NullPointerException, IllegalStateException, IllegalArgumentException
 	{
-		if (notes = null)
+		if (text == null)
 		{
 			throw new NullPointerException("Trying to add notes to meeting: notes are null");
 		}
@@ -246,7 +261,7 @@ public class ContactManagerImpl implements ContactManager
 			{
 				throw new IllegalStateException("Trying to add notes to meeting: meeting with that ID is in the future");
 			}
-			PastMeeting pmx = new PastMeetingImpl(fmx, txt);
+			PastMeeting pmx = new PastMeetingImpl((FutureMeeting)fmx, text);
 		}
 	}
 
@@ -307,8 +322,8 @@ return null;//dummy value
 			Set<Contact> setcx = new HashSet<Contact>();
 			for (Contact next : AllContacts)
 			{
-				nextName = next.getName();
-				nameLength = nextName.length();
+				String nextName = next.getName();
+				int nameLength = nextName.length();
 				boolean includesString = true;
 				for(int i = 0; i < nameLength; i++)
 				{
@@ -344,9 +359,13 @@ return null;//dummy value
 	*/
 	private boolean dateIsBeforeNow(Calendar date)
 	{
-		boolean result = true;
+		boolean result = false;
+		//check whether date is actually before now
+		//if so, change result to true
+		//boolean result = true;
 		//check whether date is actually after now
 		//if so, change result to false
+
 		return result;
 	}
 
@@ -401,8 +420,8 @@ return null;//dummy value
 	*/
 	private Calendar findDateFromMeetingID(int meetingID)
 	{
-		Calendar dateOfMeeting = ; //need to find this
-		return dateOfMeeting;
+		//Calendar dateOfMeeting = ; //need to find this
+		return null;//dateOfMeeting;
 	}
 
 }
