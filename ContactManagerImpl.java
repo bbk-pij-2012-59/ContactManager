@@ -18,10 +18,14 @@ import java.util.HashSet;
 * 8th March 2013 - every exception is to be thrown within an if statement
 * 11th March 2013 - testing individual methods using launch2 method of ContactManagerDriver
 *                   addFutureMeeting(Set<Contact> contacts, Calendar date) generates an ID
-		    getMeeting(int id) appears to work
-		    addNewPastMeeting(Set<Contact> contacts, Calendar date, String text) appears to work
-		    getFutureMeeting(int id) appears to work
-		    getPastMeeting(int id) appears to work
+*		    getMeeting(int id) appears to work
+*		    addNewPastMeeting(Set<Contact> contacts, Calendar date, String text) appears to work
+*		    getFutureMeeting(int id) appears to work
+*		    getPastMeeting(int id) appears to work
+* 12th March 2013 - continuing to write methods
+*		    getAllMeetingList compiles
+*		    getPastMeetingList compiles
+*		    getFutureMeetingList compiles
 */
 public class ContactManagerImpl implements ContactManager
 {
@@ -72,6 +76,7 @@ public class ContactManagerImpl implements ContactManager
 	* @return the meeting with the requested ID, or null if it there is none.
 	* @throws IllegalArgumentException if there is a meeting with that ID happening in the future
 	*/
+//APPEARS TO WORK 11/03/2013
 	public PastMeeting getPastMeeting(int id) throws IllegalArgumentException
 	{
 		PastMeeting pmx = (PastMeeting)getMeeting(id);
@@ -90,6 +95,7 @@ public class ContactManagerImpl implements ContactManager
 	* @return the meeting with the requested ID, or null if it there is none.
 	* @throws IllegalArgumentException if there is a meeting with that ID happening in the past
 	*/
+//APPEARS TO WORK 11/03/2013
 	public FutureMeeting getFutureMeeting(int id) throws IllegalArgumentException
 	{
 		FutureMeeting fmx = (FutureMeeting)getMeeting(id);
@@ -133,21 +139,25 @@ public class ContactManagerImpl implements ContactManager
 	* @return the list of future meeting(s) scheduled with this contact (maybe empty).
 	* @throws IllegalArgumentException if the contact does not exist
 	*/
+//COMPILES 12/03/2012, BUT SORT NOT IMPLEMENTED
 	public List<Meeting> getFutureMeetingList(Contact contact) throws IllegalArgumentException
 	{
-		if(!contactExists(contact))
-		{
-			throw new IllegalArgumentException("Trying to find future meetings with contact: contact does not exist");
-		}
-		else
-		{	
 		List<Meeting> listfmx = new ArrayList<Meeting>();
-//		If meetings are scheduled with the contact
-//			add meetings into list
+		List<Meeting> listmx = getAllMeetingList(contact);
+		if(!listmx.isEmpty())
+		{
+			Calendar now = Calendar.getInstance();
+			for(Meeting next: listmx)//step through the list of meetings with this contact
+			{
+				Calendar nextclr = next.getDate();//date for this meeting
+				if(nextclr.after(now))//check to see if date is in future
+				{
+					listfmx.add(next);//if so, add this meeting to listpmx
+				}
+			}
 //			sort list by date and time
-			return listfmx;
 		}
-
+		return listfmx;
 	}
 
 
@@ -185,20 +195,25 @@ public class ContactManagerImpl implements ContactManager
 	* @return the list of PAST meeting(s) scheduled with this contact (maybe empty).
 	* @throws IllegalArgumentException if the contact does not exist
 	*/
+//COMPILES 12/03/2012, BUT SORT NOT IMPLEMENTED
 	public List<PastMeeting> getPastMeetingList(Contact contact) throws IllegalArgumentException
 	{
-		if(!contactExists(contact))
+		List<PastMeeting> listpmx = new ArrayList<PastMeeting>();
+		List<Meeting> listmx = getAllMeetingList(contact);
+		if(!listmx.isEmpty())
 		{
-			throw new IllegalArgumentException("Trying to find past meetings with contact: contact does not exist");
-		}
-		else
-		{	
-			List<PastMeeting> listpmx = new ArrayList<PastMeeting>();
-//			If meetings happened with the contact
-//			add meetings into list
+			Calendar now = Calendar.getInstance();
+			for(Meeting next: listmx)//step through the list of meetings with this contact
+			{
+				Calendar nextclr = next.getDate();//date for this meeting
+				if(nextclr.before(now))//check to see if date is in past
+				{
+					listpmx.add((PastMeeting)next);//if so, add this meeting to listpmx
+				}
+			}
 //			sort list by date and time
-			return listpmx;
 		}
+		return listpmx;
 	}
 
 
@@ -434,6 +449,37 @@ return null;//dummy value
 	{
 		//Calendar dateOfMeeting = ; //need to find this
 		return null;//dateOfMeeting;
+	}
+
+	/**
+	* Returns the list of all meetings, both past and future, with this contact.
+	*
+	* If there are none, the returned list will be empty.
+	*
+	* @param contact one of the user’s contacts
+	* @return the list of meeting(s) with this contact (may be empty).
+	* @throws IllegalArgumentException if the contact does not exist
+	*/
+//COMPILES 12/03/2012
+	private List<Meeting> getAllMeetingList(Contact contact) throws IllegalArgumentException
+	{
+		if(!contactExists(contact))
+		{
+			throw new IllegalArgumentException("Trying to find meetings with contact: contact does not exist");
+		}
+		else
+		{	
+			List<Meeting> listmx = new ArrayList<Meeting>();
+			for(Meeting next: AllMeetings)//step through the list of meetings
+			{
+				Set<Contact> nextclx = next.getContacts();//set of contacts for this meeting
+				if(nextclx.contains(contact))//check to see if contact is in this set
+				{
+ 					listmx.add(next);//if so, add this meeting to listmx
+				}
+			}
+			return listmx;
+		}
 	}
 
 }
