@@ -1,8 +1,9 @@
-import java.util.Calendar;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Set;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -155,7 +156,7 @@ public class ContactManagerImpl implements ContactManager
 					listfmx.add(next);//if so, add this meeting to listpmx
 				}
 			}
-//			sort list by date and time
+//			Collections.sort(listfmx);
 		}
 		return listfmx;
 	}
@@ -178,7 +179,7 @@ public class ContactManagerImpl implements ContactManager
 //		If meetings happened on or are scheduled for that date
 //		{
 //			add meetings into list
-//			sort list by date and time
+//			listmx = Collections.sort(listmx);
 			return listmx;
 //		}
 	}
@@ -211,7 +212,7 @@ public class ContactManagerImpl implements ContactManager
 					listpmx.add((PastMeeting)next);//if so, add this meeting to listpmx
 				}
 			}
-//			sort list by date and time
+//			listpmx = Collections.sort(listpmx);
 		}
 		return listpmx;
 	}
@@ -402,11 +403,14 @@ return null;//dummy value
 	* @param contact the contact to be checked	*
 	* @return true if the contact exists, false otherwise
 	*/
+//COMPILES 12/03/2012
 	private boolean contactExists(Contact contact)
 	{
-		boolean result = true;
-		//check whether contact actually exists
-		//if not, change result to false
+		boolean result = false;
+		if(AllContacts.contains(contact))
+		{
+			result = true;
+		}
 		return result;
 	}
 
@@ -416,11 +420,14 @@ return null;//dummy value
 	* @param contact the set of contacts to be checked	*
 	* @return true if all the contact exist, false otherwise
 	*/
+//COMPILES 12/03/2012
 	private boolean contactExists(Set<Contact> contact)
 	{
 		boolean result = true;
-		//check whether all contacts actually exist, by calling contactExists for each contact
-		//if not, change result to false
+		for (Contact next : contact)
+		{
+			result = result && contactExists(next);
+		}
 		return result;
 	}
 
