@@ -27,6 +27,9 @@ import java.util.Set;
 *		    getAllMeetingList compiles
 *		    getPastMeetingList compiles
 *		    getFutureMeetingList compiles
+*		    both versions of contactExists compile
+*		    addNewContact compiles
+*		    getContacts compiles
 */
 public class ContactManagerImpl implements ContactManager
 {
@@ -291,6 +294,7 @@ public class ContactManagerImpl implements ContactManager
 	* @param notes notes to be added about the contact.
 	* @throws NullPointerException if the name or the notes are null
 	*/
+//COMPILES 12/03/2012
 	public void addNewContact(String name, String notes) throws NullPointerException
 	{
 		if(name == null || notes ==null)
@@ -312,13 +316,31 @@ public class ContactManagerImpl implements ContactManager
 	* @return a list containing the contacts that correspond to the IDs.
 	* @throws IllegalArgumentException if any of the IDs does not correspond to a real contact
 	*/
+//COMPILES 12/03/2012
 	public Set<Contact> getContacts(int... ids) throws IllegalArgumentException
 	{
-
-// If all the contact IDs exist
-//		return a list of the corresponding contacts
-// otherwise throw the required exception (IllegalArgumentException)
-return null;//dummy value
+		Set<Contact> setcx = new HashSet<Contact>();
+		int countProvided = ids.length;
+		int countFound = 0;
+		for(int i = 0; i < countProvided; i++)
+		{
+			for (Contact next : AllContacts)
+			{
+				if(next.getId() == ids[i])
+				{
+					setcx.add(next);
+					countFound++;
+				}
+			}
+		}
+		if (countFound != countProvided)
+		{
+			throw new IllegalArgumentException("Trying to list of contacts corresponding to IDs: at least one contact does not exist");
+		}
+		else
+		{
+			return setcx; 			
+		}
 	}
 
 
