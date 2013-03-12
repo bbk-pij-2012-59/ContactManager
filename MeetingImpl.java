@@ -1,5 +1,6 @@
 import java.util.Calendar;
 import java.util.Set;
+import java.io.Serializable;
 
 /**
 * A class to represent meetings
@@ -8,12 +9,11 @@ import java.util.Set;
 *
 * 6th February 2013 - Created from the Meeting interface
 * Three (plus one static) fields, constructor and interior of methods added
-* Compiles OK
 * 28th February 2013 - further constructor added
-* Compiles OK
+* 12th March 2013 - needs to implement Comparable and have CompareTo method for sorting by date
 */
 
-public class MeetingImpl implements Meeting
+public class MeetingImpl implements Comparable, Meeting, Serializable
 {
 
 	private int MeetingID;
@@ -85,6 +85,28 @@ public class MeetingImpl implements Meeting
 	{
 		return this.MeetingParticipants;
 	}
+
+	/**
+	* Used for sorting by date
+	*
+	* @return an integer
+	*/
+	public int compareTo(Object otherObject)
+	{
+		Meeting other = (Meeting) otherObject;
+		int n = 0;
+		Calendar otherc = other.getDate();
+		if (this.MeetingDate.after(other.getDate()))
+		{
+			n = 1;
+		}
+		else if (this.MeetingDate.before(other.getDate()))
+		{
+			n = -1;
+		}
+		return n;
+	}
+
 
 }
 
