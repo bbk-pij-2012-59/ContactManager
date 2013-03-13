@@ -29,7 +29,9 @@ import java.util.Set;
 *		    getFutureMeetingList compiles
 *		    both versions of contactExists compile
 *		    addNewContact compiles
-*		    getContacts compiles
+*		    getContacts(int... ids) compiles
+* 13th March 2013 - continuing to write methods
+*		    getContacts(String name) compiles
 */
 public class ContactManagerImpl implements ContactManager
 {
@@ -265,6 +267,7 @@ public class ContactManagerImpl implements ContactManager
 	* @throws IllegalStateException if the meeting is set for a date in the future
 	* @throws NullPointerException if the notes are null
 	*/
+//COMPILES 12/03/2012
 	public void addMeetingNotes(int id, String text) throws NullPointerException, IllegalStateException, IllegalArgumentException
 	{
 		if (text == null)
@@ -351,6 +354,7 @@ public class ContactManagerImpl implements ContactManager
 	* @return a list with the contacts whose name contains that string.
 	* @throws NullPointerException if the parameter is null
 	*/
+//COMPILES 13/03/2012
 	public Set<Contact> getContacts(String name) throws NullPointerException
 	{
 		if(name == null)
@@ -359,23 +363,28 @@ public class ContactManagerImpl implements ContactManager
 		}
 		else
 		{
-			Set<Contact> setcx = new HashSet<Contact>();
+			Set<Contact> setOfMatchingContacts = new HashSet<Contact>();
+			int searchStringLength = name.length();
 			for (Contact next : AllContacts)
 			{
-				String nextName = next.getName();
-				int nameLength = nextName.length();
-				boolean includesString = true;
-				for(int i = 0; i < nameLength; i++)
+				int contactNameLength = next.getName().length();
+				for(int i = 0; i < (contactNameLength - searchStringLength); i++)
 				{
-					//check to see if string is in name
-					//if not, change includesString to false;
-				}
-				if(includesString)
-				{
-					setcx.add(next);
+					boolean includesSearchString = true;
+					for(int j = 0; j < searchStringLength; j++)
+					{
+						if(name.charAt(j) != next.getName().charAt(i+j))
+						{
+							 includesSearchString = false;
+						}
+					}
+					if(includesSearchString)
+					{
+						setOfMatchingContacts.add(next);
+					}
 				}
 			}
-		return setcx;
+		return setOfMatchingContacts;
 		}
 	}
 
@@ -428,12 +437,12 @@ public class ContactManagerImpl implements ContactManager
 //COMPILES 12/03/2012
 	private boolean contactExists(Contact contact)
 	{
-		boolean result = false;
+		boolean contactIsInAllContacts = false;
 		if(AllContacts.contains(contact))
 		{
-			result = true;
+			contactIsInAllContacts = true;
 		}
-		return result;
+		return contactIsInAllContacts;
 	}
 
 	/**
@@ -445,40 +454,14 @@ public class ContactManagerImpl implements ContactManager
 //COMPILES 12/03/2012
 	private boolean contactExists(Set<Contact> contact)
 	{
-		boolean result = true;
+		boolean contactsAreInAllContacts = true;
 		for (Contact next : contact)
 		{
-			result = result && contactExists(next);
+			contactsAreInAllContacts = contactsAreInAllContacts && contactExists(next);
 		}
-		return result;
+		return contactsAreInAllContacts;
 	}
 
-	/**
-	* Checks whether a meeting exists
-	*
-	* @param meetingID the ID of the meeting to be checked
-	* @return true if the meeting exists, false otherwise
-	*/
-	private boolean meetingExists(int meetingID)
-	{
-		boolean result = true;
-		//check whether meeting actually exists
-		//if not, change result to false
-		return result;
-	}
-
-
-	/**
-	* Finds the date of a meeting from its ID
-	*
-	* @param meetingID the ID of the meeting
-	* @return the date of the meeting
-	*/
-	private Calendar findDateFromMeetingID(int meetingID)
-	{
-		//Calendar dateOfMeeting = ; //need to find this
-		return null;//dateOfMeeting;
-	}
 
 	/**
 	* Returns the list of all meetings, both past and future, with this contact.
@@ -498,16 +481,16 @@ public class ContactManagerImpl implements ContactManager
 		}
 		else
 		{	
-			List<Meeting> listmx = new ArrayList<Meeting>();
+			List<Meeting> listOfMeetingsWithThisContact = new ArrayList<Meeting>();
 			for(Meeting next: AllMeetings)//step through the list of meetings
 			{
 				Set<Contact> nextclx = next.getContacts();//set of contacts for this meeting
 				if(nextclx.contains(contact))//check to see if contact is in this set
 				{
- 					listmx.add(next);//if so, add this meeting to listmx
+ 					listOfMeetingsWithThisContact.add(next);//if so, add this meeting to listmx
 				}
 			}
-			return listmx;
+			return listOfMeetingsWithThisContact;
 		}
 	}
 
