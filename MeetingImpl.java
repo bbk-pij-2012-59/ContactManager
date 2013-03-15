@@ -10,7 +10,8 @@ import java.io.Serializable;
 * 6th February 2013 - Created from the Meeting interface
 * Three (plus one static) fields, constructor and interior of methods added
 * 28th February 2013 - further constructor added
-* 12th March 2013 - needs to implement Comparable and have CompareTo method for sorting by date
+* 12th March 2013 - implements Comparable and has CompareTo method for sorting by date
+* 14th March 2013 - overriding toString method, but not equals and HashCode
 */
 
 public class MeetingImpl implements Comparable, Meeting, Serializable
@@ -95,7 +96,6 @@ public class MeetingImpl implements Comparable, Meeting, Serializable
 	{
 		Meeting other = (Meeting) otherObject;
 		int n = 0;
-		Calendar otherc = other.getDate();
 		if (this.MeetingDate.after(other.getDate()))
 		{
 			n = 1;
@@ -107,6 +107,16 @@ public class MeetingImpl implements Comparable, Meeting, Serializable
 		return n;
 	}
 
+	/**
+	* toString method to override that from Object class
+	* @return String consisting of meeting's ID, date and notes
+	*
+	*/
+	public String toString()
+	{
+		String meetingAsString = "Meeting: " + this.getId() + " on " + this.getDate().getTime();
+		return meetingAsString;
+	}
 
 }
 

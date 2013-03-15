@@ -1,4 +1,5 @@
 import java.util.Calendar;
+import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -11,6 +12,7 @@ import java.util.Set;
 * Probably will also need a setNotes method
 * Compiles OK
 * 28th February 2013 - further constructor added
+* 14th March 2013 - overriding toString method
 * Compiles OK
 */
 
@@ -55,6 +57,18 @@ public class PastMeetingImpl extends MeetingImpl implements PastMeeting
 	public String getNotes()
 	{
 			return this.MeetingNotes;
+	}
+
+
+	/**
+	* toString method to override that from MeetingImpl class
+	* @return String consisting of meeting's ID, date and notes
+	*
+	*/
+	public String toString()
+	{
+		String meetingAsString = "Meeting: " + this.getId() + " on " + this.getDate().getTime() + " [" + this.getNotes() + "])";
+		return meetingAsString;
 	}
 
 }
