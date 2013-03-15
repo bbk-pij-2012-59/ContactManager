@@ -3,6 +3,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.io.Serializable;
 import java.util.Set;
 
 
@@ -32,8 +33,9 @@ import java.util.Set;
 *		    getContacts(int... ids) compiles
 * 13th March 2013 - continuing to write methods
 *		    getContacts(String name) compiles
+* 14th March 2013 - dateIsBeforeNow method
 */
-public class ContactManagerImpl implements ContactManager
+public class ContactManagerImpl implements ContactManager, Serializable
 {
 
 	//private List<Meeting> AllMeetings;
@@ -62,7 +64,7 @@ public class ContactManagerImpl implements ContactManager
 //APPEARS TO WORK 11/03/2013
 	public int addFutureMeeting(Set<Contact> contacts, Calendar date) throws IllegalArgumentException
 	{
-		if(!dateIsAfterNow(date) || !contactExists(contacts))
+		if(dateIsBeforeNow(date) || !contactExists(contacts))
 		{
 			throw new IllegalArgumentException("Trying to add future meeting: contact doesn't exist or date is in past");
 		}
@@ -105,7 +107,7 @@ public class ContactManagerImpl implements ContactManager
 	public FutureMeeting getFutureMeeting(int id) throws IllegalArgumentException
 	{
 		FutureMeeting fmx = (FutureMeeting)getMeeting(id);
-		if(!dateIsAfterNow(fmx.getDate()))
+		if(dateIsBeforeNow(fmx.getDate()))
 		{
 			throw new IllegalArgumentException("Trying to find future meeting: meeting with that ID is in the past");
 		}
@@ -408,24 +410,13 @@ public class ContactManagerImpl implements ContactManager
 	*/
 	private boolean dateIsBeforeNow(Calendar date)
 	{
-		boolean result = true;
-		//check whether date is actually after now
-		//if so, change result to false
-		return result;
-	}
-
-	/**
-	* Checks whether a date is after (true) or before the current date
-	*
-	* @param date the date to be checked	*
-	* @return true if the date is after, or false if the date is before, now
-	*/
-	private boolean dateIsAfterNow(Calendar date)
-	{
-		boolean result = true;
-		//check whether date is actually after now
-		//if so, change result to false
-		return result;
+		boolean beforeNow = true;
+		Calendar now = Calendar.getInstance();
+		if(now.before(date))
+		{
+			beforeNow = false;
+		}
+		return beforeNow;
 	}
 
 	/**
