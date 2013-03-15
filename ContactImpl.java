@@ -1,3 +1,4 @@
+import java.io.Serializable;
 /**
 * A contact is a person we are making business with or may do in the future.
 *
@@ -7,9 +8,10 @@
 * 30th January 2013 - Created from the Contact interface
 * Three (plus one static) fields, constructor and interior of methods added
 * 31st January 2013 - Compiles OK and passes current set of four tests
+* 14th March 2013 - overriding equals and toString methods, but not HashCode
 */
 
-public class ContactImpl implements Contact
+public class ContactImpl implements Contact, Serializable
 {
 
 	private int ContactID;
@@ -77,4 +79,34 @@ public class ContactImpl implements Contact
 		this.ContactNotes = this.ContactNotes + note;
 		//Could be kind to the user and add a space (or linebreak) between old notes and new notes...
 	}
+
+
+	/**
+	* equals method to override that from Object class
+	*
+	* @param other - the one to be compared with
+	* @return true if the two contacts have the same name, false otherwise
+	*/
+	public boolean equals(Object obj)
+	{
+		boolean ContactsHaveSameName = false;
+		ContactImpl otherContact = (ContactImpl)obj;
+		if (this.ContactName.equals(otherContact.ContactName));
+		{
+			ContactsHaveSameName = true;
+		}
+		return ContactsHaveSameName;
+	}
+
+	/**
+	* toString method to override that from Object class
+	* @return String consisting of contact's ID, name and notes
+	*
+	*/
+	public String toString()
+	{
+		String contactAsString = "Contact: " + this.getId() + " (" + this.getName() + " [" + this.getNotes() + "])";
+		return contactAsString;
+	}
+
 }
