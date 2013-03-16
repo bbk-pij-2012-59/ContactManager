@@ -12,12 +12,12 @@ import java.util.Set;
 * 6th February 2013 - Created from the ContactManager interface
 * Empty constructor and methods
 * 7th February 2013 - English language (not even pseudocode) descriptions of methods!
-* 5th March 2013 - added dummy return statements, so that the compiler isn't screaming!
-* 5th March 2013 - created some private methods to do some of the checking for conditions that cause exceptions to be thrown
-*                  (won't need to write these methods until later!)
-* 6th March 2013 - continuing with methods, both public and private
-* 7th March 2013 - throwing exceptions
-* 8th March 2013 - every exception is to be thrown within an if statement
+* 5th March 2013 -  added dummy return statements, so that the compiler isn't screaming!
+* 5th March 2013 -  created some private methods to do some of the checking for conditions that cause exceptions to be thrown
+*                   (won't need to write these methods until later!)
+* 6th March 2013 -  continuing with methods, both public and private
+* 7th March 2013 -  throwing exceptions
+* 8th March 2013 -  every exception is to be thrown within an if statement
 * 11th March 2013 - testing individual methods using launch2 method of ContactManagerDriver
 *                   addFutureMeeting(Set<Contact> contacts, Calendar date) generates an ID
 *		    getMeeting(int id) appears to work
@@ -36,14 +36,16 @@ import java.util.Set;
 * 14th March 2013 - dateIsBeforeNow method
 * 16th March 2013 - need to convert strings to lower case in getContacts(String name) method
 *		    testing individual methods using launch3 method of ContactManagerDriver
+*		    modifications to getFutureMeeting(int id) and getPastMeeting(int id)
+*		    testing private methods using launch4 method of ContactManagerDriver
+*		    getAllMeetingList now calls Collection.sort, but warning of unchecked method invocation
+*		    newly-written getFutureMeetingList(Calendar date) appears to work
 */
 public class ContactManagerImpl implements ContactManager, Serializable
 {
 
 	private List<Meeting> AllMeetings;
 	private Set<Contact> AllContacts;
-	//public List<Meeting> AllMeetings; //should make it easier to test what's going on
-	//public Set<Contact> AllContacts; //should it easier to test what's going on
 
 	/**
 	*constructor - creates a new ContactManager
@@ -133,7 +135,7 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	* @param id the ID for the meeting
 	* @return the meeting with the requested ID, or null if it there is none.
 	*/
-//APPEARS TO WORK 11/03/2013
+//APPEARS TO WORK 11/03/2013 & 16/03/2013
 	public Meeting getMeeting(int id)
 	{
 		for (Meeting next : AllMeetings)
@@ -159,7 +161,7 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	* @return the list of future meeting(s) scheduled with this contact (maybe empty).
 	* @throws IllegalArgumentException if the contact does not exist
 	*/
-//COMPILES 12/03/2012, BUT SORT NOT IMPLEMENTED
+//APPEARS TO WORK 16/03/2013
 	public List<Meeting> getFutureMeetingList(Contact contact) throws IllegalArgumentException
 	{
 		List<Meeting> listfmx = new ArrayList<Meeting>();
@@ -172,10 +174,9 @@ public class ContactManagerImpl implements ContactManager, Serializable
 				Calendar nextclr = next.getDate();//date for this meeting
 				if(nextclr.after(now))//check to see if date is in future
 				{
-					listfmx.add(next);//if so, add this meeting to listpmx
+					listfmx.add(next);//if so, add this meeting to list
 				}
 			}
-//			Collections.sort(listfmx);
 		}
 		return listfmx;
 	}
@@ -192,17 +193,31 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	* @param date the date
 	* @return the list of meetings
 	*/
+//COMPILES 16/03/2013
 	public List<Meeting> getFutureMeetingList(Calendar date)
 	{
-		List<Meeting> listmx = new ArrayList<Meeting>();
-//		If meetings happened on or are scheduled for that date
-//		{
-//			add meetings into list
-//			listmx = Collections.sort(listmx);
-			return listmx;
-//		}
-	}
+		List<Meeting> listOfMeetingsOnThisDate = new ArrayList<Meeting>();
+		List<MeetingImpl> listOfMeetingImplsOnThisDate = new ArrayList<MeetingImpl>();
+		for(Meeting next: AllMeetings)
+		{
+			if(next.getDate().get(Calendar.YEAR) == date.get(Calendar.YEAR) &&
+				next.getDate().get(Calendar.MONTH) == date.get(Calendar.MONTH) &&
+					next.getDate().get(Calendar.DAY_OF_MONTH) == date.get(Calendar.DAY_OF_MONTH))
+			{
+				listOfMeetingImplsOnThisDate.add((MeetingImpl)next);
+			}
+		}
+		if(!listOfMeetingImplsOnThisDate.isEmpty())
+		{
+			Collections.sort(listOfMeetingImplsOnThisDate);
+			for(Meeting next: listOfMeetingImplsOnThisDate)
+			{
+ 			listOfMeetingsOnThisDate.add((Meeting)next);
+			}
+		}		
+			return listOfMeetingsOnThisDate;
 
+	}
 
 	/**
 	* Returns the list of past meetings in which this contact has participated.
@@ -215,7 +230,7 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	* @return the list of PAST meeting(s) scheduled with this contact (maybe empty).
 	* @throws IllegalArgumentException if the contact does not exist
 	*/
-//COMPILES 12/03/2012, BUT SORT NOT IMPLEMENTED
+//APPEARS TO WORK 16/03/2013
 	public List<PastMeeting> getPastMeetingList(Contact contact) throws IllegalArgumentException
 	{
 		List<PastMeeting> listpmx = new ArrayList<PastMeeting>();
@@ -231,7 +246,6 @@ public class ContactManagerImpl implements ContactManager, Serializable
 					listpmx.add((PastMeeting)next);//if so, add this meeting to listpmx
 				}
 			}
-//			listpmx = Collections.sort(listpmx);
 		}
 		return listpmx;
 	}
@@ -424,6 +438,7 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	* @param date the date to be checked	*
 	* @return false if the date is after, or true if the date is before, now
 	*/
+//APPEARS TO WORK 16/03/2013
 	private boolean dateIsBeforeNow(Calendar date)
 	{
 		boolean beforeNow = true;
@@ -441,7 +456,7 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	* @param contact the contact to be checked	*
 	* @return true if the contact exists, false otherwise
 	*/
-//COMPILES 12/03/2012
+//APPEARS TO WORK 16/03/2013
 	private boolean contactExists(Contact contact)
 	{
 		boolean contactIsInAllContacts = false;
@@ -458,7 +473,7 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	* @param contact the set of contacts to be checked	*
 	* @return true if all the contact exist, false otherwise
 	*/
-//COMPILES 12/03/2012
+//APPEARS TO WORK 16/03/2013
 	private boolean contactExists(Set<Contact> contact)
 	{
 		boolean contactsAreInAllContacts = true;
@@ -479,7 +494,7 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	* @return the list of meeting(s) with this contact (may be empty).
 	* @throws IllegalArgumentException if the contact does not exist
 	*/
-//COMPILES 12/03/2012
+//APPEARS TO WORK 16/03/2013
 	private List<Meeting> getAllMeetingList(Contact contact) throws IllegalArgumentException
 	{
 		if(!contactExists(contact))
@@ -488,13 +503,22 @@ public class ContactManagerImpl implements ContactManager, Serializable
 		}
 		else
 		{	
-			List<Meeting> listOfMeetingsWithThisContact = new ArrayList<Meeting>();
-			for(Meeting next: AllMeetings)//step through the list of meetings
+			List<Meeting> listOfMeetingsWithThisContact = new ArrayList<Meeting>(); //create empty list of Meetings
+			List<MeetingImpl> listOfMeetingImplsWithThisContact = new ArrayList<MeetingImpl>(); //create empty list of MeetingImpls
+			for(Meeting next: AllMeetings)//step through the whole list of meetings
 			{
 				Set<Contact> nextclx = next.getContacts();//set of contacts for this meeting
 				if(nextclx.contains(contact))//check to see if contact is in this set
 				{
- 					listOfMeetingsWithThisContact.add(next);//if so, add this meeting to listmx
+ 					listOfMeetingImplsWithThisContact.add((MeetingImpl)next);//if so, add this meeting to list of MeetingImpls 
+				}
+			}
+			if(!listOfMeetingImplsWithThisContact.isEmpty())//if there are any meetings in the list
+			{
+				Collections.sort(listOfMeetingImplsWithThisContact); //sort list of MeetingImpls
+				for(Meeting next: listOfMeetingImplsWithThisContact) //step through the sorted list of MeetingImpls with this contact
+				{
+ 					listOfMeetingsWithThisContact.add((Meeting)next);//convert back to list of Meetings
 				}
 			}
 			return listOfMeetingsWithThisContact;
