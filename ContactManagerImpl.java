@@ -34,14 +34,16 @@ import java.util.Set;
 * 13th March 2013 - continuing to write methods
 *		    getContacts(String name) compiles
 * 14th March 2013 - dateIsBeforeNow method
+* 16th March 2013 - need to convert strings to lower case in getContacts(String name) method
+*		    testing individual methods using launch3 method of ContactManagerDriver
 */
 public class ContactManagerImpl implements ContactManager, Serializable
 {
 
-	//private List<Meeting> AllMeetings;
-	//private Set<Contact> AllContacts;
-	public List<Meeting> AllMeetings; //should make it easier to test what's going on
-	public Set<Contact> AllContacts; //should it easier to test what's going on
+	private List<Meeting> AllMeetings;
+	private Set<Contact> AllContacts;
+	//public List<Meeting> AllMeetings; //should make it easier to test what's going on
+	//public Set<Contact> AllContacts; //should it easier to test what's going on
 
 	/**
 	*constructor - creates a new ContactManager
@@ -61,7 +63,7 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	* @throws IllegalArgumentException if the meeting is set for a time in the past,
 	* of if any contact is unknown / non-existent
 	*/
-//APPEARS TO WORK 11/03/2013
+//APPEARS TO WORK 11/03/2013 & 16/03/2013
 	public int addFutureMeeting(Set<Contact> contacts, Calendar date) throws IllegalArgumentException
 	{
 		if(dateIsBeforeNow(date) || !contactExists(contacts))
@@ -85,14 +87,19 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	* @throws IllegalArgumentException if there is a meeting with that ID happening in the future
 	*/
 //APPEARS TO WORK 11/03/2013
+//APPEARS TO WORK 16/03/2013, after modification
 	public PastMeeting getPastMeeting(int id) throws IllegalArgumentException
 	{
-		PastMeeting pmx = (PastMeeting)getMeeting(id);
-		if(!dateIsBeforeNow(pmx.getDate()))
+		Meeting mx = getMeeting(id);
+		if(mx != null)
 		{
-			throw new IllegalArgumentException("Trying to find past meeting: meeting with that ID is in the future");
+			if(!dateIsBeforeNow(mx.getDate()))
+			{
+				throw new IllegalArgumentException("Trying to find past meeting: meeting with that ID is in the future");
+			}
 		}
-			return pmx;
+		PastMeeting pmx = (PastMeeting)mx;
+		return pmx;
 	}
 
 
@@ -104,13 +111,18 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	* @throws IllegalArgumentException if there is a meeting with that ID happening in the past
 	*/
 //APPEARS TO WORK 11/03/2013
+//APPEARS TO WORK 16/03/2013, after modification
 	public FutureMeeting getFutureMeeting(int id) throws IllegalArgumentException
 	{
-		FutureMeeting fmx = (FutureMeeting)getMeeting(id);
-		if(dateIsBeforeNow(fmx.getDate()))
+		Meeting mx = getMeeting(id);
+		if(mx != null)
 		{
-			throw new IllegalArgumentException("Trying to find future meeting: meeting with that ID is in the past");
+			if(dateIsBeforeNow(mx.getDate()))
+			{
+				throw new IllegalArgumentException("Trying to find future meeting: meeting with that ID is in the past");
+			}
 		}
+		FutureMeeting fmx = (FutureMeeting)mx;
 		return fmx;
 	}
 
@@ -235,8 +247,9 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	* empty, or any of the contacts does not exist
 	* @throws NullPointerException if any of the arguments is null
 	*/
-//APPEARS TO WORK 11/03/2013
-//NB Doesn't check whether date is in the past
+//APPEARS TO WORK 11/03/2013 & 16/03/2013
+//COMMENT: Doesn't return ID of meeting, unlike addFutureMeeting
+//COMMENT: Doesn't check whether date is in the past
 	public void addNewPastMeeting(Set<Contact> contacts, Calendar date, String text) throws NullPointerException
 	{
 		if(contacts == null || date == null || text == null)
@@ -299,7 +312,7 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	* @param notes notes to be added about the contact.
 	* @throws NullPointerException if the name or the notes are null
 	*/
-//COMPILES 12/03/2012
+//APPEARS TO WORK 16/03/2013
 	public void addNewContact(String name, String notes) throws NullPointerException
 	{
 		if(name == null || notes ==null)
@@ -321,7 +334,7 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	* @return a list containing the contacts that correspond to the IDs.
 	* @throws IllegalArgumentException if any of the IDs does not correspond to a real contact
 	*/
-//COMPILES 12/03/2012
+//APPEARS TO WORK 16/03/2013
 	public Set<Contact> getContacts(int... ids) throws IllegalArgumentException
 	{
 		Set<Contact> setcx = new HashSet<Contact>();
@@ -356,7 +369,8 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	* @return a list with the contacts whose name contains that string.
 	* @throws NullPointerException if the parameter is null
 	*/
-//COMPILES 13/03/2012
+//APPEARS TO WORK 16/03/2013
+//COMMENT: currently, if parameter is empty string, returns all contacts.
 	public Set<Contact> getContacts(String name) throws NullPointerException
 	{
 		if(name == null)
@@ -367,15 +381,17 @@ public class ContactManagerImpl implements ContactManager, Serializable
 		{
 			Set<Contact> setOfMatchingContacts = new HashSet<Contact>();
 			int searchStringLength = name.length();
+			String lcname = name.toLowerCase();
 			for (Contact next : AllContacts)
 			{
+				String lccontactName = next.getName().toLowerCase();
 				int contactNameLength = next.getName().length();
 				for(int i = 0; i < (contactNameLength - searchStringLength); i++)
 				{
 					boolean includesSearchString = true;
 					for(int j = 0; j < searchStringLength; j++)
 					{
-						if(name.charAt(j) != next.getName().charAt(i+j))
+						if(lcname.charAt(j) != lccontactName.charAt(i+j))
 						{
 							 includesSearchString = false;
 						}
