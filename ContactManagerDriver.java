@@ -144,7 +144,8 @@ class ContactManagerDriver
 	public void launch3()
 	{
 		System.out.println("CREATING new ContactManager object");
-		ContactManager cm1 = new ContactManagerImpl();
+		ContactManagerImpl cm1 = new ContactManagerImpl();
+		cm1.showOnScreen();
 		String x = null;
 
 		System.out.println("");
@@ -263,10 +264,11 @@ class ContactManagerDriver
 
 		System.out.println("");
 		System.out.println("What cm1 holds: ");
+		cm1.showOnScreen();
 		cm1.flush();
 
 		System.out.println("CREATING another new ContactManager object");
-		ContactManager cm2 = new ContactManagerImpl();
+		ContactManagerImpl cm2 = new ContactManagerImpl();
 
 
 		System.out.println("");
@@ -320,11 +322,11 @@ class ContactManagerDriver
 
 		System.out.println("");
 		System.out.println("What cm1 holds: ");
-		cm1.flush();
+		cm1.showOnScreen();
 
 		System.out.println("");
 		System.out.println("What cm2 holds: ");
-		cm2.flush();
+		cm2.showOnScreen();
 
 	}
 

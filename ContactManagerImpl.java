@@ -48,6 +48,7 @@ import java.util.Set;
 *		      newly-written getFutureMeetingList(Calendar date) appears to work
 * 17th March 2013 -   flush method and that part of the constructor that reads in data from a file
 *		      testing using launch3 method of ContactManagerDriver
+*		      showOnScreen method 
 */
 public class ContactManagerImpl implements ContactManager
 {
@@ -442,11 +443,6 @@ public class ContactManagerImpl implements ContactManager
 	*/
 	public void flush()
 	{
-		System.out.println("");
-		System.out.println("All the contacts: " + this.AllContacts);
-		System.out.println("All the meetings: " + this.AllMeetings);
-
-		
 		try (ObjectOutputStream output = new ObjectOutputStream(
 			new BufferedOutputStream( new FileOutputStream(DATAFILE)));)
 		{
@@ -459,7 +455,18 @@ public class ContactManagerImpl implements ContactManager
 		}
 	}
 
-	//RW's COMMENT - specification ended here, following four private helper methods added by me
+	//RW's COMMENT - specification ended here, following one public and four private helper methods added by me
+
+	/**
+	* Writes all data to screen.
+	*/
+	public void showOnScreen()
+	{
+		System.out.println("");
+		System.out.println("All the contacts: " + this.AllContacts);
+		System.out.println("All the meetings: " + this.AllMeetings);
+		System.out.println("");
+	}
 	
 	/**
 	* Checks whether a date is after or before (true) the current date
