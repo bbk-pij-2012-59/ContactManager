@@ -109,6 +109,7 @@ public class MeetingImpl implements Comparable, Meeting, Serializable
 
 	/**
 	* toString method to override that from Object class
+	*
 	* @return String consisting of meeting's ID, date and notes
 	*
 	*/

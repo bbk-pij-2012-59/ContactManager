@@ -6,7 +6,6 @@ import java.util.Set;
 *
 * 6th February 2013 - Created from the FutureMeeting interface
 * Constructor added
-* Compiles OK
 */
 public class FutureMeetingImpl extends MeetingImpl implements FutureMeeting
 {

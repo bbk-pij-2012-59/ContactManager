@@ -8,12 +8,9 @@ import java.util.Set;
 * It includes your notes about what happened and what was agreed.
 *
 * 6th February 2013 - Created from the PastMeeting interface
-* One extra field, another constructor and interior of method added
-* Probably will also need a setNotes method
-* Compiles OK
+* One extra field, another constructor and code for method added
 * 28th February 2013 - further constructor added
 * 14th March 2013 - overriding toString method
-* Compiles OK
 */
 
 public class PastMeetingImpl extends MeetingImpl implements PastMeeting
