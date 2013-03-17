@@ -10,7 +10,7 @@ import java.util.HashSet;
 * 5th March 2013 - Calendar instance created
 * 5th March 2013 - HashSet of Contacts created
 * 5th March 2013 - Meeting instances created
-* 11th March 2013 - Testing individual methods from ContactManagerImpl
+* 11th March 2013 onwards - Testing individual methods from ContactManagerImpl
 */
 
 class ContactManagerDriver
@@ -251,7 +251,7 @@ class ContactManagerDriver
 		System.out.println("TESTING getPastMeetingList(Contact contact)");
 		for (Contact next : setc4)
 		{
-			System.out.println("The following future meetings are scheduled with "
+			System.out.println("The following past meetings are scheduled with "
 				 + next + ": " + cm1.getPastMeetingList(next));
 		}
 
@@ -259,6 +259,73 @@ class ContactManagerDriver
 		System.out.println("TESTING getFutureMeetingList(Calendar date)");
 		System.out.println("Meetings on that date" + ": " + cm1.getFutureMeetingList(cal1));
 		System.out.println("Meetings on that date" + ": " + cm1.getFutureMeetingList(cal6));
+
+
+		System.out.println("");
+		System.out.println("What cm1 holds: ");
+		cm1.flush();
+
+		System.out.println("CREATING another new ContactManager object");
+		ContactManager cm2 = new ContactManagerImpl();
+
+
+		System.out.println("");
+		System.out.println("TESTING addNewContact(String name, String notes)");
+		cm1.addNewContact("Sixth Contact", "Notes on sixth contact");
+		
+		System.out.println("");
+		System.out.println("TESTING getContacts(int... ids)");
+		System.out.println(cm1.getContacts(1001,1002,1003));
+		System.out.println(cm1.getContacts(1003,1004,1005));
+
+		System.out.println("");
+		System.out.println("TESTING getContacts(String name)");
+		System.out.println(cm1.getContacts("co"));
+
+		System.out.println("");
+		System.out.println("TESTING addFutureMeeting(Set<Contact> contacts, Calendar date)");
+		Calendar cal7 = Calendar.getInstance();
+		cal7.set(2013,2,18);
+		System.out.println(cm1.addFutureMeeting(cm1.getContacts("fi"), cal7));
+
+		System.out.println("");
+		System.out.println("TESTING addNewPastMeeting(Set<Contact> contacts, Calendar date, String text)");
+		Calendar cal8 = Calendar.getInstance();
+		cal8.set(2013,2,17);
+		cm1.addNewPastMeeting(setc2, cal8, "Notes about yet another past meeting");
+
+		System.out.println("");
+		System.out.println("TESTING getMeeting(int id)");
+		for(int i = 1001; i<1010; i++)
+		{
+			System.out.println(cm1.getMeeting(i));
+		}			
+
+
+		System.out.println("");
+		System.out.println("TESTING getFutureMeetingList(Contact contact)");
+		for (Contact next : cm1.getContacts("co"))
+		{
+			System.out.println("The following future meetings are scheduled with "
+				 + next + ": " + cm1.getFutureMeetingList(next));
+		}
+
+		System.out.println("");
+		System.out.println("TESTING getPastMeetingList(Contact contact)");
+		for (Contact next : cm1.getContacts("co"))
+		{
+			System.out.println("The following past meetings are scheduled with "
+				 + next + ": " + cm1.getPastMeetingList(next));
+		}
+
+		System.out.println("");
+		System.out.println("What cm1 holds: ");
+		cm1.flush();
+
+		System.out.println("");
+		System.out.println("What cm2 holds: ");
+		cm2.flush();
+
 	}
 
 /**
