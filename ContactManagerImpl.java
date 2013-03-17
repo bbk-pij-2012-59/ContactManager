@@ -1,59 +1,87 @@
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashSet; 
 import java.util.List;
-import java.io.Serializable;
 import java.util.Set;
-
 
 /**
 * A class to manage your contacts and meetings.
 * 6th February 2013 - Created from the ContactManager interface
-* Empty constructor and methods
+* 		      Empty constructor and methods
 * 7th February 2013 - English language (not even pseudocode) descriptions of methods!
-* 5th March 2013 -  added dummy return statements, so that the compiler isn't screaming!
-* 5th March 2013 -  created some private methods to do some of the checking for conditions that cause exceptions to be thrown
-*                   (won't need to write these methods until later!)
-* 6th March 2013 -  continuing with methods, both public and private
-* 7th March 2013 -  throwing exceptions
-* 8th March 2013 -  every exception is to be thrown within an if statement
-* 11th March 2013 - testing individual methods using launch2 method of ContactManagerDriver
-*                   addFutureMeeting(Set<Contact> contacts, Calendar date) generates an ID
-*		    getMeeting(int id) appears to work
-*		    addNewPastMeeting(Set<Contact> contacts, Calendar date, String text) appears to work
-*		    getFutureMeeting(int id) appears to work
-*		    getPastMeeting(int id) appears to work
-* 12th March 2013 - continuing to write methods
-*		    getAllMeetingList compiles
-*		    getPastMeetingList compiles
-*		    getFutureMeetingList compiles
-*		    both versions of contactExists compile
-*		    addNewContact compiles
-*		    getContacts(int... ids) compiles
-* 13th March 2013 - continuing to write methods
-*		    getContacts(String name) compiles
-* 14th March 2013 - dateIsBeforeNow method
-* 16th March 2013 - need to convert strings to lower case in getContacts(String name) method
-*		    testing individual methods using launch3 method of ContactManagerDriver
-*		    modifications to getFutureMeeting(int id) and getPastMeeting(int id)
-*		    testing private methods using launch4 method of ContactManagerDriver
-*		    getAllMeetingList now calls Collection.sort, but warning of unchecked method invocation
-*		    newly-written getFutureMeetingList(Calendar date) appears to work
+* 5th March 2013 -    added dummy return statements, so that the compiler isn't screaming!
+* 5th March 2013 -    created some private methods to do some of the checking for conditions that cause exceptions to be thrown
+*                     (won't need to write these methods until later!)
+* 6th March 2013 -    continuing with methods, both public and private
+* 7th March 2013 -    throwing exceptions
+* 8th March 2013 -    every exception is to be thrown within an if statement
+* 11th March 2013 -   testing individual methods using launch2 method of ContactManagerDriver
+*                     addFutureMeeting(Set<Contact> contacts, Calendar date) generates an ID
+*		      getMeeting(int id) appears to work
+*		      addNewPastMeeting(Set<Contact> contacts, Calendar date, String text) appears to work
+*		      getFutureMeeting(int id) appears to work
+*		      getPastMeeting(int id) appears to work
+* 12th March 2013 -   continuing to write methods
+*		      getAllMeetingList compiles
+*	  	      getPastMeetingList compiles
+*		      getFutureMeetingList compiles
+*		      both versions of contactExists compile
+*		      addNewContact compiles
+*		      getContacts(int... ids) compiles
+* 13th March 2013 -   continuing to write methods
+*		      getContacts(String name) compiles
+* 14th March 2013 -   dateIsBeforeNow method
+* 16th March 2013 -   need to convert strings to lower case in getContacts(String name) method
+*		      testing individual methods using launch3 method of ContactManagerDriver
+*		      modifications to getFutureMeeting(int id) and getPastMeeting(int id)
+*		      testing private methods using launch4 method of ContactManagerDriver
+*		      getAllMeetingList now calls Collection.sort, but warning of unchecked method invocation
+*		      newly-written getFutureMeetingList(Calendar date) appears to work
+* 17th March 2013 -   flush method and that part of the constructor that reads in data from a file
+*		      testing using launch3 method of ContactManagerDriver
 */
-public class ContactManagerImpl implements ContactManager, Serializable
+public class ContactManagerImpl implements ContactManager
 {
 
 	private List<Meeting> AllMeetings;
 	private Set<Contact> AllContacts;
 
+	private static final String DATAFILE = "contacts.txt";
+
 	/**
 	*constructor - creates a new ContactManager
+	*if datafile exists, copies data from there
 	*/
 	public ContactManagerImpl()
 	{
-		AllContacts = new HashSet<Contact>();
-		AllMeetings = new ArrayList<Meeting>();
+		if(!new File(DATAFILE).exists())
+		{
+			AllContacts = new HashSet<Contact>();
+			AllMeetings = new ArrayList<Meeting>();
+		}
+		else
+		{
+			try (ObjectInputStream input = new ObjectInputStream(
+			new BufferedInputStream( new FileInputStream(DATAFILE)));)
+			{
+				AllContacts = (Set<Contact>) input.readObject();
+				AllMeetings = (List<Meeting>) input.readObject();
+			}
+			catch (IOException | ClassNotFoundException ex)
+			{
+			System.err.println("Error when trying to read in data" + ex);
+			}
+			
+		}
 	}
 
 	/**
@@ -63,9 +91,8 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	* @param date the date on which the meeting will take place
 	* @return the ID for the meeting
 	* @throws IllegalArgumentException if the meeting is set for a time in the past,
-	* of if any contact is unknown / non-existent
+	* or if any contact is unknown / non-existent
 	*/
-//APPEARS TO WORK 11/03/2013 & 16/03/2013
 	public int addFutureMeeting(Set<Contact> contacts, Calendar date) throws IllegalArgumentException
 	{
 		if(dateIsBeforeNow(date) || !contactExists(contacts))
@@ -88,8 +115,6 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	* @return the meeting with the requested ID, or null if it there is none.
 	* @throws IllegalArgumentException if there is a meeting with that ID happening in the future
 	*/
-//APPEARS TO WORK 11/03/2013
-//APPEARS TO WORK 16/03/2013, after modification
 	public PastMeeting getPastMeeting(int id) throws IllegalArgumentException
 	{
 		Meeting mx = getMeeting(id);
@@ -112,8 +137,6 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	* @return the meeting with the requested ID, or null if it there is none.
 	* @throws IllegalArgumentException if there is a meeting with that ID happening in the past
 	*/
-//APPEARS TO WORK 11/03/2013
-//APPEARS TO WORK 16/03/2013, after modification
 	public FutureMeeting getFutureMeeting(int id) throws IllegalArgumentException
 	{
 		Meeting mx = getMeeting(id);
@@ -135,7 +158,6 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	* @param id the ID for the meeting
 	* @return the meeting with the requested ID, or null if it there is none.
 	*/
-//APPEARS TO WORK 11/03/2013 & 16/03/2013
 	public Meeting getMeeting(int id)
 	{
 		for (Meeting next : AllMeetings)
@@ -161,7 +183,6 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	* @return the list of future meeting(s) scheduled with this contact (maybe empty).
 	* @throws IllegalArgumentException if the contact does not exist
 	*/
-//APPEARS TO WORK 16/03/2013
 	public List<Meeting> getFutureMeetingList(Contact contact) throws IllegalArgumentException
 	{
 		List<Meeting> listfmx = new ArrayList<Meeting>();
@@ -193,7 +214,6 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	* @param date the date
 	* @return the list of meetings
 	*/
-//COMPILES 16/03/2013
 	public List<Meeting> getFutureMeetingList(Calendar date)
 	{
 		List<Meeting> listOfMeetingsOnThisDate = new ArrayList<Meeting>();
@@ -230,7 +250,6 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	* @return the list of PAST meeting(s) scheduled with this contact (maybe empty).
 	* @throws IllegalArgumentException if the contact does not exist
 	*/
-//APPEARS TO WORK 16/03/2013
 	public List<PastMeeting> getPastMeetingList(Contact contact) throws IllegalArgumentException
 	{
 		List<PastMeeting> listpmx = new ArrayList<PastMeeting>();
@@ -260,10 +279,9 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	* @throws IllegalArgumentException if the list of contacts is
 	* empty, or any of the contacts does not exist
 	* @throws NullPointerException if any of the arguments is null
+	* Ruth's COMMENT: Doesn't return ID of meeting, unlike addFutureMeeting
+	* Ruth's COMMENT: Doesn't check whether date is in the past
 	*/
-//APPEARS TO WORK 11/03/2013 & 16/03/2013
-//COMMENT: Doesn't return ID of meeting, unlike addFutureMeeting
-//COMMENT: Doesn't check whether date is in the past
 	public void addNewPastMeeting(Set<Contact> contacts, Calendar date, String text) throws NullPointerException
 	{
 		if(contacts == null || date == null || text == null)
@@ -296,7 +314,6 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	* @throws IllegalStateException if the meeting is set for a date in the future
 	* @throws NullPointerException if the notes are null
 	*/
-//COMPILES 12/03/2012
 	public void addMeetingNotes(int id, String text) throws NullPointerException, IllegalStateException, IllegalArgumentException
 	{
 		if (text == null)
@@ -326,7 +343,6 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	* @param notes notes to be added about the contact.
 	* @throws NullPointerException if the name or the notes are null
 	*/
-//APPEARS TO WORK 16/03/2013
 	public void addNewContact(String name, String notes) throws NullPointerException
 	{
 		if(name == null || notes ==null)
@@ -348,7 +364,6 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	* @return a list containing the contacts that correspond to the IDs.
 	* @throws IllegalArgumentException if any of the IDs does not correspond to a real contact
 	*/
-//APPEARS TO WORK 16/03/2013
 	public Set<Contact> getContacts(int... ids) throws IllegalArgumentException
 	{
 		Set<Contact> setcx = new HashSet<Contact>();
@@ -367,7 +382,7 @@ public class ContactManagerImpl implements ContactManager, Serializable
 		}
 		if (countFound != countProvided)
 		{
-			throw new IllegalArgumentException("Trying to list of contacts corresponding to IDs: at least one contact does not exist");
+			throw new IllegalArgumentException("Trying to create list of contacts corresponding to IDs: at least one contact does not exist");
 		}
 		else
 		{
@@ -382,9 +397,8 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	* @param name the string to search for
 	* @return a list with the contacts whose name contains that string.
 	* @throws NullPointerException if the parameter is null
+	* Ruth's COMMENT: if parameter is empty string, returns all contacts.
 	*/
-//APPEARS TO WORK 16/03/2013
-//COMMENT: currently, if parameter is empty string, returns all contacts.
 	public Set<Contact> getContacts(String name) throws NullPointerException
 	{
 		if(name == null)
@@ -428,9 +442,24 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	*/
 	public void flush()
 	{
-// Need to look up XMLWriter
+		System.out.println("");
+		System.out.println("All the contacts: " + this.AllContacts);
+		System.out.println("All the meetings: " + this.AllMeetings);
+
+		
+		try (ObjectOutputStream output = new ObjectOutputStream(
+			new BufferedOutputStream( new FileOutputStream(DATAFILE)));)
+		{
+			output.writeObject(this.AllContacts);
+			output.writeObject(this.AllMeetings);
+		}
+		catch (IOException ex)
+		{
+			System.err.println("Error when trying to use flush method" + ex);
+		}
 	}
 
+	//RW's COMMENT - specification ended here, following four private helper methods added by me
 	
 	/**
 	* Checks whether a date is after or before (true) the current date
@@ -438,7 +467,6 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	* @param date the date to be checked	*
 	* @return false if the date is after, or true if the date is before, now
 	*/
-//APPEARS TO WORK 16/03/2013
 	private boolean dateIsBeforeNow(Calendar date)
 	{
 		boolean beforeNow = true;
@@ -456,7 +484,6 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	* @param contact the contact to be checked	*
 	* @return true if the contact exists, false otherwise
 	*/
-//APPEARS TO WORK 16/03/2013
 	private boolean contactExists(Contact contact)
 	{
 		boolean contactIsInAllContacts = false;
@@ -473,7 +500,6 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	* @param contact the set of contacts to be checked	*
 	* @return true if all the contact exist, false otherwise
 	*/
-//APPEARS TO WORK 16/03/2013
 	private boolean contactExists(Set<Contact> contact)
 	{
 		boolean contactsAreInAllContacts = true;
@@ -494,7 +520,6 @@ public class ContactManagerImpl implements ContactManager, Serializable
 	* @return the list of meeting(s) with this contact (may be empty).
 	* @throws IllegalArgumentException if the contact does not exist
 	*/
-//APPEARS TO WORK 16/03/2013
 	private List<Meeting> getAllMeetingList(Contact contact) throws IllegalArgumentException
 	{
 		if(!contactExists(contact))
