@@ -12,6 +12,7 @@ import java.io.Serializable;
 * 28th February 2013 - further constructor added
 * 12th March 2013 - implements Comparable and has CompareTo method for sorting by date
 * 14th March 2013 - overriding toString method, but not equals and HashCode
+* 17th March 2013 - default constructor
 */
 
 public class MeetingImpl implements Comparable, Meeting, Serializable
@@ -21,6 +22,13 @@ public class MeetingImpl implements Comparable, Meeting, Serializable
 	private Calendar MeetingDate;
 	private Set<Contact> MeetingParticipants;
 	private static int MeetingCount = 1000; //I like IDs to have the same number of digits...
+
+	/**
+	* default constructor for Serialization
+	*/
+	public MeetingImpl()
+	{
+	}
 
 	/**
 	*constructor - creates a new meeting

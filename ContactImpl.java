@@ -9,6 +9,7 @@ import java.io.Serializable;
 * Three (plus one static) fields, constructor and interior of methods added
 * 31st January 2013 - Compiles OK and passes current set of four tests
 * 14th March 2013 - overriding equals and toString methods, but not HashCode
+* 17th March 2013 - default constructor
 */
 
 public class ContactImpl implements Contact, Serializable
@@ -21,7 +22,14 @@ public class ContactImpl implements Contact, Serializable
 	//Obviously, a real contact database would have far more fields than this!
 
 	/**
-	*constructor - creates a new contact
+	* default constructor for Serialization
+	*/
+	public ContactImpl()
+	{
+	}
+
+	/**
+	* constructor - creates a new contact
 	* @param name the name of the new contact
 	* @param notes our notes, if any, about the contact
 	* For better security, could follow KLM's instructions,
