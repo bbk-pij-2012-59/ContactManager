@@ -370,9 +370,9 @@ public class ContactManagerImpl implements ContactManager
 		Set<Contact> setcx = new HashSet<Contact>();
 		int countProvided = ids.length;
 		int countFound = 0;
-		for(int i = 0; i < countProvided; i++)
+		for (Contact next : AllContacts)
 		{
-			for (Contact next : AllContacts)
+			for(int i = 0; i < countProvided; i++)
 			{
 				if(next.getId() == ids[i])
 				{
@@ -381,7 +381,7 @@ public class ContactManagerImpl implements ContactManager
 				}
 			}
 		}
-		if (countFound != countProvided)
+		if (countFound < countProvided)
 		{
 			throw new IllegalArgumentException("Trying to create list of contacts corresponding to IDs: at least one contact does not exist");
 		}
@@ -494,9 +494,16 @@ public class ContactManagerImpl implements ContactManager
 	private boolean contactExists(Contact contact)
 	{
 		boolean contactIsInAllContacts = false;
-		if(AllContacts.contains(contact))
-		{
-			contactIsInAllContacts = true;
+//		if(AllContacts.contains(contact))
+//		{
+//			contactIsInAllContacts = true;
+//		}
+		for(Contact next : AllContacts)
+		{		
+			if(next.getId() == contact.getId())
+			{
+				contactIsInAllContacts = true;
+			}
 		}
 		return contactIsInAllContacts;
 	}
